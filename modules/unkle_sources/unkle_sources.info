@@ -1,0 +1,15 @@
+name = Unkle Sources
+description = Source Citations, Repositories, and Notes for Unkle
+core = 7.x
+package = unkle
+dependencies[] = unkle
+dependencies[] = field
+dependencies[] = date
+dependencies[] = views
+files[] = unkle_sources.module
+files[] = unkle_sources_pages.inc
+files[] = source.controller.inc
+files[] = note.controller.inc
+files[] = repository.controller.inc
+version = "7.x-1.0-alpha1"
+

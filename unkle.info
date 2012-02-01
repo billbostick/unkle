@@ -1,0 +1,21 @@
+; $Id: unkle.info 49 2011-03-29 06:25:54Z bill $
+name = Unkle
+description = A geanology module for Drupal
+core = 7.x
+package = unkle
+configure = "admin/config/content/unkle"
+dependencies[] = field
+dependencies[] = node_reference
+dependencies[] = date
+dependencies[] = views
+files[] = unkle.module
+files[] = unkle.event.inc
+files[] = event.controller.inc
+files[] = unkle.event.pages.inc
+files[] = unkle.admin.inc
+files[] = unkle.tree.inc
+files[] = unkle.util.inc
+files[] = unkle.gedcom.inc
+files[] = unkle.views_default.inc
+version = "7.x-1.0-alpha1"
+

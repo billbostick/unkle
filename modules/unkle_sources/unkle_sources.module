@@ -1,0 +1,453 @@
+<?php
+
+/**
+ * @file
+ * Notes module for Unkle genealogy package
+ */
+
+/**
+ * Implements hook_permission().
+ */
+function unkle_sources_permission() {
+  return array(
+    'administer unkle sources' =>  array(
+      'title' => t('administer unkle sources'),
+    ),
+    'view own unkle sources' => array(
+      'title' => t('View own unkle sources'),
+    ),
+    'view any unkle sources' => array(
+      'title' => t('View any unkle sources'),
+    ),
+    'modify own unkle sources' => array(
+      'title' => t('Modify own unkle sources'),
+    ),
+    'modify any unkle sources' => array(
+      'title' => t('Modify any unkle sources'),
+    ),
+  );
+}
+
+/**
+ * Implements hook_menu().
+ */
+function unkle_sources_menu() {
+
+  // note menu items
+  $items['note/%note'] = array(
+    'title callback' => 'unkle_notes_page_title',
+    'title arguments' => array(1),
+    'page callback' => 'unkle_notes_page',
+    'page arguments' => array(1),
+    'access arguments' => array('view any unkle notes'),
+    'file' => 'unkle_sources_pages.inc',
+  );
+  $items['note/%note/view'] = array(
+    'title' => 'View',
+    'type' => MENU_DEFAULT_LOCAL_TASK,
+  );
+  $items['note/%note/edit'] = array(
+    'title' => 'Edit',
+    'page callback' => 'drupal_get_form',
+    'page arguments' => array('unkle_notes_form_edit', 1),
+    'access arguments' => array('administer unkle sources'),
+    'type' => MENU_LOCAL_TASK,
+    'weight' => 10,
+    'file' => 'unkle_sources_pages.inc',
+  );
+
+  $items['admin/structure/note'] = array(
+    'title' => 'Notes',
+    'description' => 'Manage notes on your site.',
+    'access arguments' => array('administer unkle sources'),
+    'page callback' => 'unkle_notes_page_admin',
+    'page arguments' => array('list'),
+    'weight' => -10,
+    'file' => 'unkle_sources_pages.inc',
+  );
+
+  $items['admin/structure/note/list'] = array(
+    'title' => 'List',
+    'type' => MENU_DEFAULT_LOCAL_TASK,
+    'weight' => -10,
+    'file' => 'unkle_sources_pages.inc',
+  );
+
+  $items['admin/structure/note/create'] = array(
+    'title' => 'Add note',
+    'page arguments' => array('create'),
+    'access arguments' => array('administer unkle sources'),
+    'type' => MENU_LOCAL_ACTION,
+    'file' => 'unkle_sources_pages.inc',
+  );
+
+  // source menu items
+  $items['source/%source'] = array(
+    'title callback' => 'unkle_sources_page_title',
+    'title arguments' => array(1),
+    'page callback' => 'unkle_sources_page',
+    'page arguments' => array(1),
+    'access arguments' => array('view any unkle notes'),
+    'file' => 'unkle_sources_pages.inc',
+  );
+  $items['source/%source/view'] = array(
+    'title' => 'View',
+    'type' => MENU_DEFAULT_LOCAL_TASK,
+    'file' => 'unkle_sources_pages.inc',
+  );
+  $items['source/%source/edit'] = array(
+    'title' => 'Edit',
+    'page callback' => 'drupal_get_form',
+    'page arguments' => array('unkle_sources_form_edit', 1),
+    'access arguments' => array('administer unkle sources'),
+    'type' => MENU_LOCAL_TASK,
+    'weight' => 10,
+    'file' => 'unkle_sources_pages.inc',
+  );
+
+  $items['admin/structure/source'] = array(
+    'title' => 'Sources',
+    'description' => 'Manage sources on your site.',
+    'access arguments' => array('administer unkle sources'),
+    'page callback' => 'unkle_sources_page_admin',
+    'page arguments' => array('list'),
+    'weight' => -10,
+    'file' => 'unkle_sources_pages.inc',
+  );
+
+  $items['admin/structure/source/list'] = array(
+    'title' => 'List',
+    'type' => MENU_DEFAULT_LOCAL_TASK,
+    'weight' => -10,
+    'file' => 'unkle_sources_pages.inc',
+  );
+
+  $items['admin/structure/source/create'] = array(
+    'title' => 'Add source',
+    'page arguments' => array('create'),
+    'access arguments' => array('administer unkle sources'),
+    'type' => MENU_LOCAL_ACTION,
+    'file' => 'unkle_sources_pages.inc',
+  );
+  
+  // repository menu items
+  $items['repo/%repo'] = array(
+    'title callback' => 'unkle_repos_page_title',
+    'title arguments' => array(1),
+    'page callback' => 'unkle_repos_page',
+    'page arguments' => array(1),
+    'access arguments' => array('view any unkle notes'),
+    'file' => 'unkle_sources_pages.inc',
+  );
+  $items['repo/%repo/view'] = array(
+    'title' => 'View',
+    'type' => MENU_DEFAULT_LOCAL_TASK,
+    'file' => 'unkle_sources_pages.inc',
+  );
+  $items['repo/%repo/edit'] = array(
+    'title' => 'Edit',
+    'page callback' => 'drupal_get_form',
+    'page arguments' => array('unkle_repos_form_edit', 1),
+    'access arguments' => array('administer unkle sources'),
+    'type' => MENU_LOCAL_TASK,
+    'weight' => 10,
+    'file' => 'unkle_sources_pages.inc',
+  );
+
+  $items['admin/structure/repo'] = array(
+    'title' => 'Repositories',
+    'description' => 'Manage repositories on your site.',
+    'access arguments' => array('administer unkle sources'),
+    'page callback' => 'unkle_repos_page_admin',
+    'page arguments' => array('list'),
+    'weight' => -10,
+    'file' => 'unkle_sources_pages.inc',
+  );
+
+  $items['admin/structure/repo/list'] = array(
+    'title' => 'List',
+    'type' => MENU_DEFAULT_LOCAL_TASK,
+    'weight' => -10,
+    'file' => 'unkle_sources_pages.inc',
+  );
+
+  $items['admin/structure/repo/create'] = array(
+    'title' => 'Add repository',
+    'page arguments' => array('create'),
+    'access arguments' => array('administer unkle sources'),
+    'type' => MENU_LOCAL_ACTION,
+    'file' => 'unkle_sources_pages.inc',
+  );
+  return $items;
+}
+
+
+/**
+ * Implements hook_entity_info().
+ */
+function unkle_sources_entity_info() {
+  $info = array(
+
+    'source' => array(
+      'label' => t('Source'),
+      'controller class' => 'SourceController',
+      'base table' => 'source',
+      'uri callback' => 'unkle_sources_uri',
+      'entity keys' => array(
+        'id' => 'source_id',
+      ),
+      'static_cache' => TRUE,
+      'bundles' => array(
+        'source' => array(
+          'label' => t('Source'),
+          'admin' => array(
+            'path' => 'admin/structure/source',
+            'access arguments' => array('administer unkle sources'),
+          ),
+        ),
+      ),
+      'fieldable' => TRUE,
+    ),
+
+    'note' => array(
+      'label' => t('Note'),
+      'controller class' => 'NoteController',
+      'base table' => 'note',
+      'uri callback' => 'unkle_notes_uri',
+      'entity keys' => array(
+        'id' => 'note_id',
+      ),
+      'static_cache' => TRUE,
+      'bundles' => array(
+        'note' => array(
+          'label' => t('Note'),
+          'admin' => array(
+            'path' => 'admin/structure/note',
+            'access arguments' => array('administer unkle sources'),
+          ),
+        ),
+      ),
+      'fieldable' => TRUE,
+    ),
+
+    'repository' => array(
+      'label' => t('Note'),
+      'controller class' => 'RepositoryController',
+      'base table' => 'repository',
+      'uri callback' => 'unkle_repo_uri',
+      'entity keys' => array(
+        'id' => 'repo_id',
+      ),
+      'static_cache' => TRUE,
+      'bundles' => array(
+        'repository' => array(
+          'label' => t('Repository'),
+          'admin' => array(
+            'path' => 'admin/structure/repo',
+            'access arguments' => array('administer unkle sources'),
+          ),
+        ),
+      ),
+      'fieldable' => TRUE,
+    ),
+
+  );
+  return $info;
+}
+
+/**
+ * Implements hook_field_extra_fields().
+ */
+function unkle_sources_field_extra_fields() {
+  $return = array();
+  $return['source']['source'] = array(
+    'form' => array(
+      'source_title' => array(
+        'label' => t('Title'),
+        'description' => t('Unkle sources module title form element'),
+        'weight' => -10,
+        'widget' => array(
+          'type' => 'text_textfield',
+        ),
+      ),
+      'source_pubfacts' => array(
+        'label' => t('Publication Facts'),
+        'description' => t('Unkle source module publication facts form element'),
+        'weight' => -9,
+        'widget' => array(
+          'type' => 'text_textfield',
+        ),
+      ),
+      'source_text' => array(
+        'label' => t('Source Text'),
+        'description' => t('Unkle notes module source text form element'),
+        'weight' => -8,
+        'widget' => array(
+          'type' => 'text_textformat',
+          'base_type' => 'textarea',
+          'format' => 'full_html',
+        ),
+      ),
+    ),
+  );
+  $return['note']['note'] = array(
+    'form' => array(
+      'note_title' => array(
+        'label' => t('Title'),
+        'description' => t('Unkle notes module title form element'),
+        'weight' => -10,
+        'widget' => array(
+          'type' => 'text_textfield',
+        ),
+      ),
+      'note_body' => array(
+        'label' => t('Body'),
+        'description' => t('Unkle notes module body form element'),
+        'weight' => -9,
+        'widget' => array(
+          'type' => 'text_textarea',
+        ),
+      ),
+    ),
+  );
+  $return['repository']['repository'] = array(
+    'form' => array(
+      'repo_name' => array(
+        'label' => t('Name'),
+        'description' => t('Repository name form element'),
+        'weight' => -10,
+        'widget' => array(
+          'type' => 'text_textfield',
+        ),
+      ),
+      'repo_address' => array(
+        'label' => t('Address'),
+        'description' => t('Repository address'),
+        'weight' => -9,
+        'widget' => array(
+          'type' => 'text_textarea',
+        ),
+      ),
+      'repo_city' => array(
+        'label' => t('City'),
+        'description' => t('Repository city'),
+        'weight' => -8,
+        'widget' => array(
+          'type' => 'text_textarea',
+        ),
+      ),
+      'repo_state' => array(
+        'label' => t('State'),
+        'description' => t('Repository state'),
+        'weight' => -7,
+        'widget' => array(
+          'type' => 'text_textarea',
+        ),
+      ),
+      'repo_postalcode' => array(
+        'label' => t('Postal Clde'),
+        'description' => t('Repository postal code'),
+        'weight' => -6,
+        'widget' => array(
+          'type' => 'text_textarea',
+        ),
+      ),
+      'repo_country' => array(
+        'label' => t('Country'),
+        'description' => t('Repository country'),
+        'weight' => -5,
+        'widget' => array(
+          'type' => 'text_textarea',
+        ),
+      ),
+    ),
+  );
+
+  return $return;
+}
+
+/**
+ * Implements hook_admin_paths().
+ */
+function unkle_sources_admin_paths() {
+  $paths = array(
+    'source/*/edit' => TRUE,
+    'note/*/edit' => TRUE,
+    'repo/*/edit' => TRUE,
+  );
+  return $paths;
+}
+
+// source-specific code
+
+/**
+ * Entity uri callback.
+ */
+function unkle_sources_uri($source) {
+  return array(
+    'path' => 'source/' . $source->source_id,
+  );
+}
+
+function source_load($source_id, $reset = FALSE) {
+  $sources = source_load_multiple(array($source_id), array(), $reset);
+  return reset($sources);
+}
+
+function source_load_multiple($source_ids = array(), $conditions = array(), $reset = FALSE) {
+  return entity_load('source', $source_ids, $conditions, $reset);
+}
+
+function unkle_sources_page_title($source) {
+  return $source->source_title;
+}
+
+// note-specific code
+
+/**
+ * Entity uri callback.
+ */
+function unkle_notes_uri($note) {
+  return array(
+    'path' => 'note/' . $note->note_id,
+  );
+}
+
+function note_load($note_id, $reset = FALSE) {
+  $notes = note_load_multiple(array($note_id), array(), $reset);
+  return reset($notes);
+}
+
+function note_load_multiple($note_ids = array(), $conditions = array(), $reset = FALSE) {
+  return entity_load('note', $note_ids, $conditions, $reset);
+}
+
+function unkle_notes_page_title($note) {
+  return $note->note_title;
+}
+
+// repo-specific code
+
+/**
+ * Entity uri callback.
+ */
+function unkle_repo_uri($repo) {
+  return array(
+    'path' => 'repo/' . $repo->repo_id,
+  );
+}
+
+function repo_load($repo_id, $reset = FALSE) {
+  $repos = repo_load_multiple(array($repo_id), array(), $reset);
+  return reset($repos);
+}
+
+function repo_load_multiple($repo_ids = array(), $conditions = array(), $reset = FALSE) {
+  return entity_load('repository', $repo_ids, $conditions, $reset);
+}
+
+function unkle_repos_page_title($repo) {
+  return $repo->repo_name;
+}
+
+

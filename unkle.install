@@ -1,0 +1,397 @@
+<?php
+// $Id: unkle.install 42 2011-03-28 04:39:02Z bill $
+
+/**
+ * @file
+ * Contains install and update functions for unkle
+ */
+
+function unkle_schema() {
+  $schema['unkle_event'] = array(
+    'description' => 'The base table for event entities',
+    'fields' => array(
+      'event_id' => array(
+        'description' => 'The primary identifier for an event entity',
+        'type' => 'serial',
+        'unsigned' => TRUE,
+        'not null' => TRUE,
+      ),
+      'nid' => array(
+        'description' => 'The node id of the "owner (person or family)" of an event entity',
+        'type' => 'int',
+        'unsigned' => TRUE,
+      ),
+      'event_type' => array(
+        'description' => 'The type of this event.',
+        'type' => 'varchar',
+        'not null' => TRUE,
+        'default' => '',
+        'length' => 32,
+      ),
+      'title' => array(
+        'description' => 'The title of this event.',
+        'type' => 'varchar',
+        'not null' => TRUE,
+        'default' => '',
+        'length' => 255,
+      ),
+      'date' => array(
+        'description' => 'Date of the event',
+        'cardinality' => '1',
+        'type' => 'varchar',
+        'not null' => TRUE,
+        'default' => '',
+        'length' => 255,
+      ),
+      'uid' => array(
+        'description' => 'The user ID of the source creator',
+        'type' => 'int',
+        'unsigned' => TRUE,
+      ),
+      'timestamp' => array(
+        'description' => 'Last modifitcation timestamp',
+        'type' => 'int',
+        'not null' => TRUE,
+        'unsigned' => TRUE,
+      ),
+    ),
+    'primary key' => array('event_id'),
+    'indexes' => array(
+      'type' => array('event_type'),
+      'title' => array('title'),
+    ),
+  );
+  return $schema;
+}
+                                                      
+
+/**
+ * Implements hook_install().
+ */
+function unkle_install() {
+
+  // use get_t() to get the name of our localization function for translation
+  // during install, when t() is not available.
+  $t = get_t();
+
+  // define node type Person
+  $unkle_person = array(
+    'type' => 'unkle_person',
+    'name' => $t('Person'),
+    'base' => 'node_content',
+    'description' => $t('A person in a genealogy tree.'),
+    'promote' => 0,
+    'status' => 1,
+    'comment' => 0,
+  );
+
+  // define node type Family
+  $unkle_family = array(
+    'type' => 'unkle_family',
+    'name' => $t('Family'),
+    'base' => 'node_content',
+    'description' => $t('A family in a genealogy tree.'),
+    'promote' => 0,
+    'status' => 1,
+    'comment' => 0,
+  );
+
+  // define fields for node type Person
+  $content_type = node_type_set_defaults($unkle_person);
+  node_type_save($content_type);
+
+  foreach (_unkle_person_installed_fields() as $field) {
+    field_create_field($field);
+  }
+  foreach (_unkle_person_installed_instances() as $instance) {
+    $instance['entity_type'] = 'node';
+    $instance['bundle'] = $unkle_person['type'];
+    field_create_instance($instance);
+  }
+
+  // define fields for node type Family
+  $content_type = node_type_set_defaults($unkle_family);
+  node_type_save($content_type);
+
+  foreach (_unkle_family_installed_fields() as $field) {
+    field_create_field($field);
+  }
+  foreach (_unkle_family_installed_instances() as $instance) {
+    $instance['entity_type'] = 'node';
+    $instance['bundle'] = $unkle_family['type'];
+    field_create_instance($instance);
+  }
+}
+
+function _unkle_person_installed_fields() {
+  $t = get_t();
+  return array(
+    'person_given_name' => array(
+      'field_name' => 'person_given_name',
+      'cardinality' => '1',
+      'type' => 'text',
+      'settings' => array(
+        'max_length' => 128,
+      ),
+    ),
+    'person_surname' => array(
+      'field_name' => 'person_surname',
+      'cardinality' => '1',
+      'type' => 'text',
+      'settings' => array(
+        'max_length' => 128,
+      ),
+    ),
+    'person_birthdate' => array(
+      'field_name' => 'person_birthdate',
+      'cardinality' => '1',
+      'type' => 'date',
+      'settings' => array(
+        'granularity' => drupal_map_assoc(array('year', 'month', 'day')),
+        'tz_handling' => 'none',
+      ),
+    ),
+    'person_deathdate' => array(
+      'field_name' => 'person_deathdate',
+      'cardinality' => '1',
+      'type' => 'date',
+      'settings' => array(
+        'granularity' => drupal_map_assoc(array('year', 'month', 'day')),
+        'tz_handling' => 'none',
+      ),
+    ),
+    'person_gedcom' => array(
+      'field_name' => 'person_gedcom',
+      'cardinality' => '1',
+      'type' => 'text',
+      'settings' => array(
+        'max_length' => 16384,
+        'settings' => array('rows' => 6),
+      ),
+    ),
+    'person_childtofamily' => array(
+      'field_name'  => 'person_childtofamily',
+      'label'       => $t('Child to Family Link'),
+      'cardinality' => FIELD_CARDINALITY_UNLIMITED,
+      'type'        => 'node_reference',
+      'settings'    => array(
+        'referenceable_types'  => array('unkle_family'),
+      ),
+    ),
+    'person_spousetofamily' => array(
+      'field_name'  => 'person_spousetofamily',
+      'label'       => $t('Spouse to Family Link'),
+      'cardinality' => FIELD_CARDINALITY_UNLIMITED,
+      'type'        => 'node_reference',
+      'settings'    => array(
+        'referenceable_types'  => array('unkle_family'),
+      ),
+    ),
+  );
+}
+
+function _unkle_person_installed_instances() {
+  $t = get_t();
+  return array(
+    'person_given_name' => array(
+      'field_name' => 'person_given_name',
+      'label' => $t('Given Name'),
+      'description' => 'First Name(s) - The "Elvis Arron" part of Elvis Arron Presley',
+      'widget' => array(
+        'type' => 'text_textfield',
+      ),
+    ),
+    'person_surname' => array(
+      'field_name' => 'person_surname',
+      'label' => $t('Surname'),
+      'description' => 'Last Name - The "Presley" part of Elvis Arron Presley',
+      'widget' => array(
+        'type' => 'text_textfield',
+      ),
+    ),
+    'person_birthdate' => array(
+      'field_name'  => 'person_birthdate',
+      'label'       => $t('Birth date'),
+      'cardinality' => 1,
+      'widget'      => array(
+        'type'       => 'date_text',
+        'settings'   => array(
+          'input_format' => date_default_format('date_select'),
+          'input_format_custom' => 'Y-m-d',
+          'granularity' => drupal_map_assoc(array('year', 'month', 'day')),
+          'tz_handling' => 'none',
+        ),
+        'behaviors' => array(
+          'multiple values' => FIELD_BEHAVIOR_CUSTOM,
+          'default value' => FIELD_BEHAVIOR_CUSTOM,
+        ),
+      ),
+    ),
+    'person_deathdate' => array(
+      'field_name'  => 'person_deathdate',
+      'label'       => $t('Death date'),
+      'cardinality' => 1,
+      'widget'      => array(
+        'type'       => 'date_text',
+        'settings'   => array(
+          'input_format' => date_default_format('date_select'),
+          'input_format_custom' => 'Y-m-d',
+          'granularity' => drupal_map_assoc(array('year', 'month', 'day')),
+          'tz_handling' => 'none',
+        ),
+        'behaviors' => array(
+          'multiple values' => FIELD_BEHAVIOR_CUSTOM,
+          'default value' => FIELD_BEHAVIOR_CUSTOM,
+        ),
+      ),
+    ),
+    'person_childtofamily' => array(
+      'field_name'  => 'person_childtofamily',
+      'label'       => $t('Child of'),
+      'cardinality' => FIELD_CARDINALITY_UNLIMITED,
+      'widget'      => array(
+        'type'          => 'node_reference_autocomplete',
+      ),
+    ),
+    'person_spousetofamily' => array(
+      'field_name'  => 'person_spousetofamily',
+      'label'       => $t('Spouse of'),
+      'cardinality' => FIELD_CARDINALITY_UNLIMITED,
+      'widget'      => array(
+        'type'          => 'node_reference_autocomplete',
+      ),
+    ),
+    'person_gedcom' => array(
+      'field_name' => 'person_gedcom',
+      'label' => $t('GEDCOM data'),
+      'widget' => array(
+        'type' => 'text_textarea',
+      ),
+    ),
+  );
+}
+
+function _unkle_family_installed_fields() {
+  $t = get_t();
+  return array(
+    'family_husband' => array(
+      'field_name'  => 'family_husband',
+      'label'       => $t('Husband'),
+      'cardinality' => 1,
+      'type'        => 'node_reference',
+      'settings'    => array(
+        'referenceable_types'  => array('unkle_person'),
+      ),
+    ),
+    'family_wife' => array(
+      'field_name'  => 'family_wife',
+      'label'       => $t('Wife'),
+      'cardinality' => 1,
+      'type'        => 'node_reference',
+      'settings'    => array(
+        'referenceable_types'  => array('unkle_person'),
+      ),
+    ),
+    'family_child' => array(
+      'field_name'  => 'family_child',
+      'label'       => $t('Child'),
+      'cardinality' => FIELD_CARDINALITY_UNLIMITED,
+      'type'        => 'node_reference',
+      'settings'    => array(
+        'referenceable_types'  => array('unkle_person'),
+      ),
+    ),
+    'family_gedcom' => array(
+      'field_name' => 'family_gedcom',
+      'cardinality' => '1',
+      'type' => 'text',
+      'settings' => array(
+        'max_length' => 16384,
+        'settings' => array('rows' => 6),
+      ),
+    ),
+  );
+}
+
+function _unkle_family_installed_instances() {
+  $t = get_t();
+  return array(
+    'family_husband' => array(
+      'field_name'  => 'family_husband',
+      'label'       => $t('Husband'),
+      'cardinality' => 1,
+      'widget'      => array(
+        'type'          => 'node_reference_autocomplete',
+      ),
+    ),
+    'family_wife' => array(
+      'field_name'  => 'family_wife',
+      'label'       => $t('Wife'),
+      'cardinality' => 1,
+      'widget'      => array(
+        'type'          => 'node_reference_autocomplete',
+      ),
+    ),
+    'family_child' => array(
+      'field_name'  => 'family_child',
+      'label'       => $t('Child'),
+      'cardinality' => FIELD_CARDINALITY_UNLIMITED,
+      'widget'      => array(
+        'type'          => 'node_reference_autocomplete',
+      ),
+    ),
+    'family_gedcom' => array(
+      'field_name' => 'family_gedcom',
+      'label' => $t('GEDCOM data'),
+      'widget' => array(
+        'type' => 'text_textarea',
+      ),
+    ),
+  );
+}
+
+/**
+ * Implements hook_uninstall().
+ *
+ */
+function unkle_uninstall() {
+
+   // delete Person content and structure
+  $sql = 'SELECT nid FROM {node} n WHERE n.type = :type';
+  $result = db_query($sql, array(':type' => 'unkle_person'));
+  $nids = array();
+  foreach ($result as $row) {
+    $nids[] = $row->nid;
+  }
+  node_delete_multiple($nids);
+  foreach (array_keys(_unkle_person_installed_fields()) as $field) {
+    field_delete_field($field);
+  }
+  $instances = field_info_instances('node', 'unkle_person');
+  foreach ($instances as $instance_name => $instance) {
+    field_delete_instance($instance);
+  }
+  node_type_delete('unkle_person');
+  
+  // delete Family content and structure
+  $sql = 'SELECT nid FROM {node} n WHERE n.type = :type';
+  $result = db_query($sql, array(':type' => 'unkle_family'));
+  $nids = array();
+  foreach ($result as $row) {
+    $nids[] = $row->nid;
+  }
+  node_delete_multiple($nids);
+  foreach (array_keys(_unkle_family_installed_fields()) as $field) {
+    field_delete_field($field);
+  }
+  $instances = field_info_instances('node', 'unkle_family');
+  foreach ($instances as $instance_name => $instance) {
+    field_delete_instance($instance);
+  }
+  node_type_delete('unkle_family');
+
+  // Purge all field information
+  field_purge_batch(1000);
+}
+
+

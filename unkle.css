@@ -1,0 +1,108 @@
+/* $Id: unkle.css 42 2011-03-28 04:39:02Z bill $ */
+
+#unkle-person-node-form .geninfo {
+  width: 50%;
+  float: left;
+}
+#unkle-person-node-form .geninfo .content {
+  padding: 5px 25px 15px 15px;
+  margin: 0 5px 0 0;
+  border: 1px solid #ccc;
+  background: #F0F0F0;
+}
+
+#unkle-person-node-form .genlinks {
+  width: 50%;
+  float: left;
+}
+
+#unkle-person-node-form .genlinks .content {
+  margin: 0 0 0 5px;
+}
+
+#unkle-person-node-form .genlinks .form-item, 
+#unkle-person-node-form .geninfo .form-item {
+  margin: 0;
+  padding: 0;
+}
+
+#unkle-person-node-form .geninfo .form-wrapper {
+  margin: 0;
+  padding: 0;
+}
+
+#unkle-person-node-form .genlinks .form-wrapper {
+  margin: 0 0 10px;
+  padding: 0;
+}
+
+#unkle-person-node-form .geninfo .form-item div.description {
+  font-size: 11px;
+  font-style: italic;
+  text-align: right;
+  margin: 0;
+}
+
+#unkle-person-node-form .geninfo input {
+  width: 100%;
+}
+
+#unkle-person-node-form .genlinks input.form-autocomplete {
+  width: 90%;
+}
+
+#unkle-person-node-form .geninfo .container-inline-date {
+  margin: 0;
+  display: block;
+  width: 100%;
+}
+
+#unkle-person-node-form .geninfo .container-inline-date .form-item .form-item {
+  float: none;
+}
+
+#unkle-person-node-form .genlinks table {
+  border: none;
+  font-size:inherit;
+}
+
+#unkle-person-node-form .genlinks table  th {
+  background: none;
+  border: none;
+  text-transform: none;
+  padding-left: 5px;
+}
+
+#unkle-person-node-form .genlinks table tbody {
+  border: none;
+}
+
+#unkle-person-node-form .genlinks table tr.even,
+#unkle-person-node-form .genlinks table tr.odd {
+  border: none;
+  background: none;
+}
+#unkle-person-node-form .genlinks input.field-add-more-submit {
+  float: right;
+  margin: 5px;
+  font-size: 10px;
+}
+
+#unkle-person-node-form #edit-person-gedcom {
+  clear: both;
+}
+
+#unkle-person-node-form .genlinks .tabledrag-toggle-weight-wrapper {
+  display: none;
+}
+
+#unkle-person-node-form #edit-gen-person-childtofamily {
+  border: 1px solid #ccc;
+  background: #F0F0F0;
+}
+
+#unkle-person-node-form #edit-gen-person-spousetofamily {
+  border: 1px solid #ccc;
+  background: #F0F0F0;
+}
+

@@ -1,0 +1,173 @@
+<?php
+/**
+ * @file
+ * Install, update and uninstall functions for the unkle sources module.
+ */
+
+/**
+ * Implements hook_schema().
+ *
+ * @see hook_schema()
+ * @link schemaapi Schema API @endlink
+ */
+function unkle_sources_schema() {
+  $schema['source'] = array(
+    'description' => 'The base table for source entities',
+    'fields' => array(
+      'source_id' => array(
+        'description' => 'The primary identifier for a source entity.',
+        'type' => 'serial',
+        'unsigned' => TRUE,
+        'not null' => TRUE,
+      ),
+      'source_title' => array(
+        'description' => 'The title of this source.',
+        'type' => 'varchar',
+        'not null' => TRUE,
+        'default' => '',
+        'length' => 255,
+      ),
+      'source_pubfacts' => array(
+        'description' => 'The publication facts of this source.',
+        'type' => 'varchar',
+        'not null' => TRUE,
+        'default' => '',
+        'length' => 255,
+      ),
+      'source_text' => array(
+        'description' => 'The text of this source.',
+        'type' => 'varchar',
+        'default' => '',
+        'length' => 16384,
+      ),
+      'source_uid' => array(
+        'description' => 'The user ID of the source creator',
+        'type' => 'int',
+        'unsigned' => TRUE,
+      ),
+      'source_timestamp' => array(
+        'description' => 'Last modifitcation timestamp',
+        'type' => 'int',
+        'not null' => TRUE,
+        'unsigned' => TRUE,
+      ),
+    ),
+    'primary key' => array('source_id'),
+    'indexes' => array(
+      'source_title' => array('source_title'),
+      'source_uid' => array('source_uid'),
+    ),
+  );
+  $schema['note'] = array(
+    'description' => 'The base table for note entities',
+    'fields' => array(
+      'note_id' => array(
+        'description' => 'The primary identifier for a note entity.',
+        'type' => 'serial',
+        'unsigned' => TRUE,
+        'not null' => TRUE,
+      ),
+      'note_title' => array(
+        'description' => 'The title of this note.',
+        'type' => 'varchar',
+        'not null' => TRUE,
+        'default' => '',
+        'length' => 255,
+      ),
+      'note_body' => array(
+        'description' => 'The body of this note.',
+        'type' => 'varchar',
+        'default' => '',
+        'length' => 16384,
+      ),
+      'note_uid' => array(
+        'description' => 'The user ID of the note creator',
+        'type' => 'int',
+        'unsigned' => TRUE,
+      ),
+      'note_timestamp' => array(
+        'description' => 'Last modifitcation timestamp',
+        'type' => 'int',
+        'not null' => TRUE,
+        'unsigned' => TRUE,
+      ),
+    ),
+    'primary key' => array('note_id'),
+    'indexes' => array(
+      'note_title' => array('note_title'),
+      'note_uid' => array('note_uid'),
+      'note_timestamp' => array('note_timestamp'),
+    ),
+  );
+  $schema['repository'] = array(
+    'description' => 'The base table for repository entities',
+    'fields' => array(
+      'repo_id' => array(
+        'description' => 'The primary identifier for a repository entity.',
+        'type' => 'serial',
+        'unsigned' => TRUE,
+        'not null' => TRUE,
+      ),
+      'repo_name' => array(
+        'description' => 'The name of this repository.',
+        'type' => 'varchar',
+        'not null' => TRUE,
+        'default' => '',
+        'length' => 255,
+      ),
+      'repo_address' => array(
+        'description' => 'The address of this repository.',
+        'type' => 'varchar',
+        'not null' => TRUE,
+        'default' => '',
+        'length' => 255,
+      ),
+      'repo_city' => array(
+        'description' => 'The city of this repository.',
+        'type' => 'varchar',
+        'not null' => TRUE,
+        'default' => '',
+        'length' => 255,
+      ),
+      'repo_state' => array(
+        'description' => 'The state of this repository.',
+        'type' => 'varchar',
+        'not null' => TRUE,
+        'default' => '',
+        'length' => 255,
+      ),
+      'repo_postalcode' => array(
+        'description' => 'The postal code of this repository.',
+        'type' => 'varchar',
+        'not null' => TRUE,
+        'default' => '',
+        'length' => 255,
+      ),
+      'repo_country' => array(
+        'description' => 'The country of this repository.',
+        'type' => 'varchar',
+        'not null' => TRUE,
+        'default' => '',
+        'length' => 255,
+      ),
+      'repo_uid' => array(
+        'description' => 'The user ID of the repository creator',
+        'type' => 'int',
+        'unsigned' => TRUE,
+      ),
+      'repo_timestamp' => array(
+        'description' => 'Last modifitcation timestamp',
+        'type' => 'int',
+        'not null' => TRUE,
+        'unsigned' => TRUE,
+      ),
+    ),
+    'primary key' => array('repo_id'),
+    'indexes' => array(
+      'repo_name' => array('repo_name'),
+      'repo_uid' => array('repo_uid'),
+    ),
+  );
+  return $schema;
+}
+

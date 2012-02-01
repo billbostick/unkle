@@ -1,0 +1,373 @@
+<?php
+// $Id: unkle.module 54 2011-04-01 10:12:15Z bill $
+
+/**
+ * @file
+ */
+
+/**
+ * Implements hook_help().
+ */
+function unkle_help($path, $arg) {
+  switch ($path) {
+    case 'admin/help#unkle':
+      $output = '';
+      $output .= '<p>' . t('The Unkle module provides genealogy features to Drupal.') . '</p>';
+      return $output;
+  }
+}
+
+/**
+ * Implements hook_permission().
+ */
+function unkle_permission() {
+  return array(
+    'administer unkle' => array(
+      'title' => t('Administer unkle module settings'),
+    ),
+    'access unkle' => array(
+      'title' => t('Access unkle module data'),
+    ),
+  );
+}
+
+
+function unkle_theme($existing, $type, $theme, $path) {
+  return array(
+    'node__unkle_person' => array(
+      'render element' => 'elements',
+      'path' => drupal_get_path('module', 'unkle') . '/theme',
+      'template' => 'node--unkle-person',
+    ),
+    'node__unkle_family' => array(
+      'render element' => 'elements',
+      'path' => drupal_get_path('module', 'unkle') . '/theme',
+      'template' => 'node--unkle-family',
+    ),
+  );
+}
+
+/**
+ * Implements hook_menu().
+ */
+function unkle_menu() {
+  include_once("unkle.event.inc");  
+  include_once("unkle.tree.inc");
+  include_once("unkle.gedcom.inc");
+  // admin menu items
+  $items['admin/config/content/unkle'] = array(
+    'title' => 'Unkle',
+    'description' => 'Configure settings for the unkle module.',
+    'page callback' => 'drupal_get_form',
+    'page arguments' => array('unkle_settings'),
+    'access callback' => 'user_access',
+    'access arguments' => array('administer unkle'),
+    'type' => MENU_NORMAL_ITEM,
+    'file' => 'unkle.admin.inc',
+  );
+
+  $items = array_merge($items, unkle_event_menu(), unkle_tree_menu(), unkle_gedcom_menu());
+  return $items;
+}
+
+function person_node_load($arg) {
+  $node = node_load($arg);
+  if ($node->type == 'unkle_person') {
+    return $node;
+  }
+  return FALSE;
+}
+
+/*
+function unkle_init() {
+
+  // this is the way wrong place to put these, but it's making my life a lot easier for now.
+
+  // Include the CTools tools that we need.
+  ctools_include('ajax');
+  ctools_include('modal');
+  // Add CTools' javascript to the page.
+  ctools_modal_add_js();
+  drupal_add_js('misc/ajax.js');
+}
+
+//module_load_include('inc', 'unkle', 'unkle.events');
+function unkle_get_person_events($person) {
+  $events = array();
+  foreach($person->field_events['und'] as $event) {
+    $events[] = $event['value'];
+  }
+  return $events;
+}
+
+function unkle_get_events($events = array()) {
+  $result = db_select('unkle_event', 'e')
+              ->fields('e', array('event_id', 'event_type', 'title', 'date'))
+              ->condition('event_id', $events, 'IN')
+              ->execute();
+  $output = '';
+  foreach ($result as $event) {
+    $output .= $event->event_type . ', ' .
+               l($event->title, 'event/' . $event->event_id . '/edit') . ', '.
+               $event->date .
+               ctools_modal_text_button(t('edit'), 'event/' . $event->event_id . '/edit/nojs','Edit') . '<br />';
+  }
+  return $output;
+}
+
+function unkle_node_view($node, $view_mode, $landcode) {
+  if ($node->type =='unkle_person') {
+    $node->content['event_details'] = array(
+      '#markup' => '<div id="events-container">' . 
+                   unkle_get_events(unkle_get_person_events($node)) . 
+                   '</div>',
+      '#weight' => 10,
+    );
+  } 
+  return $node;
+}
+ */
+
+
+function unkle_node_view($node, $view_mode, $langcode) {
+  // this stuff needs to go into a theme function
+  include_once("unkle.util.inc");
+  if ($node->type == 'unkle_person') {
+    $node->content['parental-families'] = array(
+      '#markup' => unkle_util_show_spouses_and_children($node),
+      '#weight' => 9,
+    );
+
+    $out1 = '';
+    if ($siblings = unkle_util_get_siblings($node)) {
+      $out1 .= '<div class="field unkle-siblings">';
+      $out1 .= '<div class="field-label">' . t('Siblings:') . '</div>';
+      foreach ($siblings as $sibling_id) {
+        $sib = node_load($sibling_id);
+        $out1 .= '<a href="/node/' . $sib->nid . '">' .
+          $sib->title . '</a><br />';
+      }
+      $out1 .= '</div>';
+    }
+    $out2 = '';
+    if ($half_siblings = unkle_util_get_half_siblings($node)) {
+      $out2 .= '<div class="field unkle-half-siblings">';
+      $out2 .= '<div class="field-label">' . t('Half-Siblings:') . '</div>';
+      foreach ($half_siblings as $sibling_id) {
+        $sib = node_load($sibling_id);
+        $out2 .= '<a href="/node/' . $sib->nid . '">' .
+          $sib->title . '</a><br />';
+      }
+      $out2 .= '</div>';
+    }
+    if ($out1) {
+      $node->content['siblings'] = array(
+        '#markup' => $out1,
+        '#weight' => 10,
+      );
+    }
+    if ($out2) {
+      $node->content['half-siblings'] = array(
+        '#markup' => $out2,
+        '#weight' => 11,
+      );
+    }
+    return $node;
+  }
+}
+
+function unkle_entity_info() {
+  include_once("unkle.event.inc");
+  $info = unkle_event_entity_info();
+  return $info;
+}
+
+function unkle_field_extra_fields() {
+  include_once("unkle.event.inc");
+  $fields = unkle_event_field_extra_fields();
+  return $fields;
+}
+
+function unkle_admin_paths() {
+  include_once("unkle.event.inc");
+  $paths = unkle_event_admin_paths();
+  return $paths;
+}
+
+function unkle_views_api() {
+  return array(
+    'api' => 3,
+    'path' => drupal_get_path('module', 'unkle') . '/views',
+  );
+}
+
+function unkle_form_unkle_family_node_form_alter(&$form, &$form_state, $form_id) {
+  drupal_add_css(drupal_get_path('module', 'unkle') . '/unkle.css');
+
+  // hide the node title field... we'll generate it in the submit handler
+  $form['title']['#value'] = 'auto';
+  $form['title']['#type'] = 'value';
+  $form['title']['#required'] = FALSE;
+}
+
+function unkle_form_unkle_person_node_form_alter(&$form, &$form_state, $form_id) {
+  drupal_add_css(drupal_get_path('module', 'unkle') . '/unkle.css');
+
+  // hide the node title field... we'll generate it in the submit handler
+  $form['title']['#value'] = 'auto';
+  $form['title']['#type'] = 'value';
+  $form['title']['#required'] = FALSE;
+
+  // add some markup for theme styling
+  $form['title']['#prefix'] = '<div class="geninfo"><div class="content">';
+  $form['person_deathdate']['#suffix'] = '</div></div>';
+  $form['person_childtofamily']['#prefix'] = '<div class="genlinks"><div class="content">';
+  $form['person_spousetofamily']['#suffix'] = '</div></div>';
+  $form['person_childtofamily']['und']['add_more']['#value'] = 'Link as child to another family';
+  $form['person_spousetofamily']['und']['add_more']['#value'] = 'Link as spouse to another family';
+}
+
+function unkle_construct_family_title(&$form_state) {
+  include_once("unkle.util.inc");
+  $title = '';
+  if ($form_state['values']['family_husband']['und'][0]['nid']) {
+    $title .= unkle_util_get_spouse_title($form_state['values']['family_husband']['und'][0]['nid']);
+  }
+  else {
+    $title .= 'Unknown';
+  }
+  $title .= ' | ';
+  if ($form_state['values']['family_wife']['und'][0]['nid']) {
+    $title .= unkle_util_get_spouse_title($form_state['values']['family_wife']['und'][0]['nid']);
+  }
+  else {
+    $title .= 'Unknown';
+  }
+  return $title;
+}
+
+function unkle_construct_person_title(&$form_state) {
+    $birthyear = '';
+    $deathyear = '';
+    $given_name = '';
+    $surname = '';
+    if ($form_state['values']['person_birthdate']['und'][0]['value']) {
+      $dateparts = date_parse($form_state['values']['person_birthdate']['und'][0]['value']);
+      if ($dateparts['year']) {
+        $birthyear = $dateparts['year'];
+      }
+    }
+    if ($form_state['values']['person_deathdate']['und'][0]['value']) {
+      $dateparts = date_parse($form_state['values']['person_deathdate']['und'][0]['value']);
+      if ($dateparts['year']) {
+        $deathyear = $dateparts['year'];
+      }
+    }
+    $given_name = $form_state['values']['person_given_name']['und'][0]['value'];
+    $surname = $form_state['values']['person_surname']['und'][0]['value'];
+    $name = '';
+    $name .= $surname? $surname : '';
+    if ($surname && $given_name) {
+      $name .= ', ';
+    }
+    $name .= $given_name? $given_name : '';
+    if ($birthyear || $deathyear) {
+      if ($name) {
+        $name .= ' ';
+      }
+      $name .= '[';
+      if ($birthyear) {
+        $name .= 'b:' . $birthyear;
+      }
+      if ($birthyear && $deathyear) {
+        $name .= ', ';
+      }
+      if ($deathyear) {
+        $name .= 'd:' . $deathyear;
+      }    
+      $name .= ']';
+    }
+    if (!$name) {
+      $name = 'Unknown';
+    }
+    return $name;
+}
+
+function unkle_family_title($family) {
+  include_once("unkle.util.inc");
+  $title = '';
+  if (is_array($family->family_husband) && count($family->family_husband)) {
+    if ($family->family_husband['und'][0]['nid']) {
+      $title .= unkle_util_get_spouse_title($family->family_husband['und'][0]['nid']);
+    }
+  }
+  else {
+    $title .= 'Unknown';
+  }
+  $title .= ' | ';
+  if (is_array($family->family_wife) && count($family->family_wife)) {
+    if ($family->family_wife['und'][0]['nid']) {
+      $title .= unkle_util_get_spouse_title($family->family_wife['und'][0]['nid']);
+    }
+  }
+  else {
+    $title .= 'Unknown';
+  }
+  return $title;
+}
+
+function unkle_person_title($surname = '', $given_name = '', $birthdate = NULL, $deathdate = NULL) {
+    $birthyear = NULL;
+    $deathyear = NULL;
+    if ($birthdate) {
+      $dateparts = date_parse($birthdate);
+      if ($dateparts['year']) {
+        $birthyear = $dateparts['year'];
+      }
+    }
+    if ($deathdate) {
+      $dateparts = date_parse($deathdate);
+      if ($dateparts['year']) {
+        $deathyear = $dateparts['year'];
+      }
+    }
+    $name = '';
+    $name .= $surname? $surname : '';
+    if ($surname && $given_name) {
+      $name .= ', ';
+    }
+    $name .= $given_name? $given_name : '';
+    if ($birthyear || $deathyear) {
+      if ($name) {
+        $name .= ' ';
+      }
+      $name .= '[';
+      if ($birthyear) {
+        $name .= 'b:' . $birthyear;
+      }
+      if ($birthyear && $deathyear) {
+        $name .= ', ';
+      }
+      if ($deathyear) {
+        $name .= 'd:' . $deathyear;
+      }    
+      $name .= ']';
+    }
+    if (!$name) {
+      $name = 'Unknown';
+    }
+    return $name;
+}
+
+function unkle_node_submit($node, $form, &$form_state) {
+  if ($node->type == 'unkle_person') {
+    $node->title = unkle_construct_person_title($form_state); 
+  }
+  elseif ($node->type == 'unkle_family') {
+    $node->title = unkle_construct_family_title($form_state); 
+  }
+}
+
+
+
+
