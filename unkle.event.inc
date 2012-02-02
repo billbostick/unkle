@@ -33,7 +33,7 @@ function unkle_event_menu() {
    'weight' => 10,
    'file' => 'unkle.event.pages.inc',
   );
-  $items['admin/unkle/event'] = array(
+  $items['admin/content/unkle/event'] = array(
     'title' => 'Events',
     'description' => 'Manage events on your site.',
     'access arguments' => array('administer unkle'),
@@ -42,13 +42,13 @@ function unkle_event_menu() {
     'weight' => -10,
     'file' => 'unkle.event.pages.inc',
   );
-  $items['admin/unkle/event/list'] = array(
+  $items['admin/content/unkle/event/list'] = array(
     'title' => 'List',
     'type' => MENU_DEFAULT_LOCAL_TASK,
     'weight' => -10,
     'file' => 'unkle.event.pages.inc',
   );
-  $items['admin/unkle/event/create'] = array(
+  $items['admin/content/unkle/event/create'] = array(
     'title' => 'Add event',
     'page arguments' => array('create'),
     'access arguments' => array('administer unkle'),
@@ -166,7 +166,7 @@ function unkle_event_entity_info() {
         'unkle_event' => array(
           'label' => t('Event'),
           'admin' => array(
-            'path' => 'admin/unkle/event',
+            'path' => 'admin/content/unkle/event',
             'access arguments' => array('administer unkle'),
           ),
         ),

@@ -56,7 +56,7 @@ function unkle_sources_menu() {
     'file' => 'unkle_sources_pages.inc',
   );
 
-  $items['admin/structure/note'] = array(
+  $items['admin/content/unkle/note'] = array(
     'title' => 'Notes',
     'description' => 'Manage notes on your site.',
     'access arguments' => array('administer unkle sources'),
@@ -66,14 +66,14 @@ function unkle_sources_menu() {
     'file' => 'unkle_sources_pages.inc',
   );
 
-  $items['admin/structure/note/list'] = array(
+  $items['admin/content/unkle/note/list'] = array(
     'title' => 'List',
     'type' => MENU_DEFAULT_LOCAL_TASK,
     'weight' => -10,
     'file' => 'unkle_sources_pages.inc',
   );
 
-  $items['admin/structure/note/create'] = array(
+  $items['admin/content/unkle/note/create'] = array(
     'title' => 'Add note',
     'page arguments' => array('create'),
     'access arguments' => array('administer unkle sources'),
@@ -105,7 +105,7 @@ function unkle_sources_menu() {
     'file' => 'unkle_sources_pages.inc',
   );
 
-  $items['admin/structure/source'] = array(
+  $items['admin/content/unkle/source'] = array(
     'title' => 'Sources',
     'description' => 'Manage sources on your site.',
     'access arguments' => array('administer unkle sources'),
@@ -115,14 +115,14 @@ function unkle_sources_menu() {
     'file' => 'unkle_sources_pages.inc',
   );
 
-  $items['admin/structure/source/list'] = array(
+  $items['admin/content/unkle/source/list'] = array(
     'title' => 'List',
     'type' => MENU_DEFAULT_LOCAL_TASK,
     'weight' => -10,
     'file' => 'unkle_sources_pages.inc',
   );
 
-  $items['admin/structure/source/create'] = array(
+  $items['admin/content/unkle/source/create'] = array(
     'title' => 'Add source',
     'page arguments' => array('create'),
     'access arguments' => array('administer unkle sources'),
@@ -154,7 +154,7 @@ function unkle_sources_menu() {
     'file' => 'unkle_sources_pages.inc',
   );
 
-  $items['admin/structure/repo'] = array(
+  $items['admin/content/unkle/repo'] = array(
     'title' => 'Repositories',
     'description' => 'Manage repositories on your site.',
     'access arguments' => array('administer unkle sources'),
@@ -164,14 +164,14 @@ function unkle_sources_menu() {
     'file' => 'unkle_sources_pages.inc',
   );
 
-  $items['admin/structure/repo/list'] = array(
+  $items['admin/content/unkle/repo/list'] = array(
     'title' => 'List',
     'type' => MENU_DEFAULT_LOCAL_TASK,
     'weight' => -10,
     'file' => 'unkle_sources_pages.inc',
   );
 
-  $items['admin/structure/repo/create'] = array(
+  $items['admin/content/unkle/repo/create'] = array(
     'title' => 'Add repository',
     'page arguments' => array('create'),
     'access arguments' => array('administer unkle sources'),
@@ -201,7 +201,7 @@ function unkle_sources_entity_info() {
         'source' => array(
           'label' => t('Source'),
           'admin' => array(
-            'path' => 'admin/structure/source',
+            'path' => 'admin/content/unkle/source',
             'access arguments' => array('administer unkle sources'),
           ),
         ),
@@ -222,7 +222,7 @@ function unkle_sources_entity_info() {
         'note' => array(
           'label' => t('Note'),
           'admin' => array(
-            'path' => 'admin/structure/note',
+            'path' => 'admin/content/unkle/note',
             'access arguments' => array('administer unkle sources'),
           ),
         ),
@@ -243,7 +243,7 @@ function unkle_sources_entity_info() {
         'repository' => array(
           'label' => t('Repository'),
           'admin' => array(
-            'path' => 'admin/structure/repo',
+            'path' => 'admin/content/unkle/repo',
             'access arguments' => array('administer unkle sources'),
           ),
         ),

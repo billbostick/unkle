@@ -65,9 +65,21 @@ function unkle_menu() {
     'type' => MENU_NORMAL_ITEM,
     'file' => 'unkle.admin.inc',
   );
+  $items['admin/content/unkle'] = array(
+    'title' => 'Unkle',
+    'page callback' => 'unkle_admin_unkle',
+    'access callback' => 'user_access',
+    'access arguments' => array('administer unkle'),
+    'type' => MENU_NORMAL_ITEM,
+  );
 
   $items = array_merge($items, unkle_event_menu(), unkle_tree_menu(), unkle_gedcom_menu());
   return $items;
+}
+
+function unkle_admin_unkle() {
+  $output = 'This is the unkle admin screen';
+  return $output;
 }
 
 function person_node_load($arg) {

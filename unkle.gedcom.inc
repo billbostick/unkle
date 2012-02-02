@@ -20,21 +20,23 @@ function unkle_gedcom_menu() {
     'type' => MENU_CALLBACK,
     'file' => 'unkle.gedcom.inc',
   );
-  $items['unkle/import'] = array(
+  $items['admin/content/unkle/import'] = array(
     'title' => 'Import GEDCOM',
     'page callback' => 'drupal_get_form',
     'page arguments' => array('unkle_gedcom_import_form'),
     'access arguments' => array('access content'),
-    'type' => MENU_CALLBACK,
+    'type' => MENU_NORMAL_ITEM,
     'file' => 'unkle.gedcom.inc',
+    'weight' => 10,
   );
-  $items['unkle/pdelete'] = array(
+  $items['admin/content/unkle/pdelete'] = array(
     'title' => 'Delete Unkle Data',
     'page callback' => 'drupal_get_form',
     'page arguments' => array('unkle_gedcom_delete_persons_form'),
     'access arguments' => array('access content'),
-    'type' => MENU_CALLBACK,
+    'type' => MENU_NORMAL_ITEM,
     'file' => 'unkle.gedcom.inc',
+    'weight' => 11,
   );
 
   return $items;
