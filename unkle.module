@@ -28,6 +28,21 @@ function unkle_permission() {
     'access unkle' => array(
       'title' => t('Access unkle module data'),
     ),
+    'create unkle records' => array(
+      'title' => t('Create unkle records'),
+    ),
+    'modify unkle records' => array(
+      'title' => t('Modify existing unkle records'),
+    ),
+    'delete unkle records' => array(
+      'title' => t('Delete unkle records'),
+    ),
+    'view living unkle records' => array(
+      'title' => t('View unkle records for living individuals'),
+    ),
+    'export unkle gedcom' => array(
+      'title' => t('Export unkle data as a GEDCOM file'),
+    ),
   );
 }
 
