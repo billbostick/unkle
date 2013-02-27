@@ -110,8 +110,8 @@ function unkle_util_get_person_childtofamily_nid($person) {
   if (property_exists($person, 'person_childtofamily') &&
       is_array($person->person_childtofamily) &&
       count($person->person_childtofamily) &&
-      $person->person_childtofamily[$lang][0]['nid']) {
-    return $person->person_childtofamily[$lang][0]['nid'];
+      $person->person_childtofamily[$lang][0]['target_id']) {
+    return $person->person_childtofamily[$lang][0]['target_id'];
   }
   else  {
     return NULL;
@@ -127,8 +127,8 @@ function unkle_util_get_family_husband_nid($family) {
   if (property_exists($family, 'family_husband') &&
       is_array($family->family_husband) &&
       count($family->family_husband) &&
-      $family->family_husband[$lang][0]['nid']) {
-    return $family->family_husband[$lang][0]['nid'];
+      $family->family_husband[$lang][0]['target_id']) {
+    return $family->family_husband[$lang][0]['target_id'];
   }
   else  {
     return NULL;
@@ -140,8 +140,8 @@ function unkle_util_get_family_wife_nid($family) {
   if (property_exists($family, 'family_wife') &&
       is_array($family->family_wife) &&
       count($family->family_wife) &&
-      $family->family_wife[$lang][0]['nid']) {
-    return $family->family_wife[$lang][0]['nid'];
+      $family->family_wife[$lang][0]['target_id']) {
+    return $family->family_wife[$lang][0]['target_id'];
   }
   else  {
     return NULL;
@@ -156,7 +156,7 @@ function unkle_util_get_family_children($family) {
         count($family->family_child) &&
         count($family->family_wife[$lang])) {
       foreach ($family->family_child[$lang] as $child) {
-        $children[] = $child['nid'];
+        $children[] = $child['target_id'];
       }    
       return $children;
     }
@@ -203,7 +203,7 @@ function unkle_util_get_families_as_spouse($person) {
       count($person->person_spousetofamily[$lang])) {
         $families = array();
         foreach ($person->person_spousetofamily[$lang] as $fam) {
-          $families[] = $fam['nid'];
+          $families[] = $fam['target_id'];
         }
         return $families;
   }

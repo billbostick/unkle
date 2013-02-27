@@ -167,13 +167,13 @@ function unkle_fam_title($family_nid) {
 
 function unkle_add_husb($family_nid, $person_nid) {
   $family = node_load($family_nid);
-  $family->family_husband['und'][]['nid'] = $person_nid;
+  $family->family_husband['und'][]['target_id'] = $person_nid;
   node_save($family);
 }
 
 function unkle_add_wife($family_nid, $person_nid) {
   $family = node_load($family_nid);
-  $family->family_wife['und'][]['nid'] = $person_nid;
+  $family->family_wife['und'][]['target_id'] = $person_nid;
   node_save($family);
 }
 
@@ -191,19 +191,19 @@ function unkle_add_gedcom($node_id, $gedcom) {
 
 function unkle_add_child($family_nid, $person_nid) {
   $family = node_load($family_nid);
-  $family->family_child['und'][]['nid'] = $person_nid;
+  $family->family_child['und'][]['target_id'] = $person_nid;
   node_save($family);
 }
 
 function unkle_add_fams($person_nid, $family_nid) {
   $person = node_load($person_nid);
-  $person->person_spousetofamily['und'][]['nid'] = $family_nid;
+  $person->person_spousetofamily['und'][]['target_id'] = $family_nid;
   node_save($person);
 }
 
 function unkle_add_famc($person_nid, $family_nid) {
   $person = node_load($person_nid);
-  $person->person_childtofamily['und'][]['nid'] = $family_nid;
+  $person->person_childtofamily['und'][]['target_id'] = $family_nid;
   node_save($person);
 }
 

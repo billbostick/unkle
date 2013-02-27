@@ -173,18 +173,20 @@ function _unkle_person_installed_fields() {
       'field_name'  => 'person_childtofamily',
       'label'       => $t('Child to Family Link'),
       'cardinality' => FIELD_CARDINALITY_UNLIMITED,
-      'type'        => 'node_reference',
+      'type'        => 'entityreference',
       'settings'    => array(
-        'referenceable_types'  => array('unkle_family'),
+        'target_type'  => 'node',
+        'handler_settings' => array('target_bundles' => array('unkle_family')),
       ),
     ),
     'person_spousetofamily' => array(
       'field_name'  => 'person_spousetofamily',
       'label'       => $t('Spouse to Family Link'),
       'cardinality' => FIELD_CARDINALITY_UNLIMITED,
-      'type'        => 'node_reference',
+      'type'        => 'entityreference',
       'settings'    => array(
-        'referenceable_types'  => array('unkle_family'),
+        'target_type'  => 'node',
+        'handler_settings' => array('target_bundles' => array('unkle_family')),
       ),
     ),
   );
@@ -250,7 +252,11 @@ function _unkle_person_installed_instances() {
       'label'       => $t('Child of'),
       'cardinality' => FIELD_CARDINALITY_UNLIMITED,
       'widget'      => array(
-        'type'          => 'node_reference_autocomplete',
+        'type'          => 'entityreference_autocomplete',
+      ),
+      'settings'    => array(
+        'target_type'  => 'node',
+        'handler_settings' => array('target_bundles' => array('unkle_family')),
       ),
     ),
     'person_spousetofamily' => array(
@@ -258,7 +264,11 @@ function _unkle_person_installed_instances() {
       'label'       => $t('Spouse of'),
       'cardinality' => FIELD_CARDINALITY_UNLIMITED,
       'widget'      => array(
-        'type'          => 'node_reference_autocomplete',
+        'type'          => 'entityreference_autocomplete',
+      ),
+      'settings'    => array(
+        'target_type'  => 'node',
+        'handler_settings' => array('target_bundles' => array('unkle_family')),
       ),
     ),
     'person_gedcom' => array(
@@ -278,27 +288,30 @@ function _unkle_family_installed_fields() {
       'field_name'  => 'family_husband',
       'label'       => $t('Husband'),
       'cardinality' => 1,
-      'type'        => 'node_reference',
+      'type'        => 'entityreference',
       'settings'    => array(
-        'referenceable_types'  => array('unkle_person'),
+        'target_type'  => 'node',
+        'handler_settings' => array('target_bundles' => array('unkle_person')),
       ),
     ),
     'family_wife' => array(
       'field_name'  => 'family_wife',
       'label'       => $t('Wife'),
       'cardinality' => 1,
-      'type'        => 'node_reference',
+      'type'        => 'entityreference',
       'settings'    => array(
-        'referenceable_types'  => array('unkle_person'),
+        'target_type'  => 'node',
+        'handler_settings' => array('target_bundles' => array('unkle_person')),
       ),
     ),
     'family_child' => array(
       'field_name'  => 'family_child',
       'label'       => $t('Child'),
       'cardinality' => FIELD_CARDINALITY_UNLIMITED,
-      'type'        => 'node_reference',
+      'type'        => 'entityreference',
       'settings'    => array(
-        'referenceable_types'  => array('unkle_person'),
+        'target_type'  => 'node',
+        'handler_settings' => array('target_bundles' => array('unkle_person')),
       ),
     ),
     'family_gedcom' => array(
@@ -321,7 +334,11 @@ function _unkle_family_installed_instances() {
       'label'       => $t('Husband'),
       'cardinality' => 1,
       'widget'      => array(
-        'type'          => 'node_reference_autocomplete',
+        'type'          => 'entityreference_autocomplete',
+      ),
+      'settings'    => array(
+        'target_type'  => 'node',
+        'handler_settings' => array('target_bundles' => array('unkle_person')),
       ),
     ),
     'family_wife' => array(
@@ -329,7 +346,11 @@ function _unkle_family_installed_instances() {
       'label'       => $t('Wife'),
       'cardinality' => 1,
       'widget'      => array(
-        'type'          => 'node_reference_autocomplete',
+        'type'          => 'entityreference_autocomplete',
+      ),
+      'settings'    => array(
+        'target_type'  => 'node',
+        'handler_settings' => array('target_bundles' => array('unkle_person')),
       ),
     ),
     'family_child' => array(
@@ -337,7 +358,7 @@ function _unkle_family_installed_instances() {
       'label'       => $t('Child'),
       'cardinality' => FIELD_CARDINALITY_UNLIMITED,
       'widget'      => array(
-        'type'          => 'node_reference_autocomplete',
+        'type'          => 'entityreference_autocomplete',
       ),
     ),
     'family_gedcom' => array(
@@ -345,6 +366,10 @@ function _unkle_family_installed_instances() {
       'label' => $t('GEDCOM data'),
       'widget' => array(
         'type' => 'text_textarea',
+      ),
+      'settings'    => array(
+        'target_type'  => 'node',
+        'handler_settings' => array('target_bundles' => array('unkle_person')),
       ),
     ),
   );

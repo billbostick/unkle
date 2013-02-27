@@ -216,9 +216,9 @@ function gedcom_get_siblings($person) {
   if (is_array($person->person_spousetofamily) && count($person->person_spousetofamily)) {
     $out .= '<h3>' . t("Spouse(s) and Children") . '</h3>';
     foreach ($person->person_spousetofamily['und'] as $famgroup) {
-      $family = node_load($famgroup['nid']);
+      $family = node_load($famgroup['target_id']);
 
-      if ($family->family_wife['und'][0]['nid'] == $person->nid) {
+      if ($family->family_wife['und'][0]['target_id'] == $person->nid) {
         $spouse = $family->family_husband;
       }
       else {
@@ -227,14 +227,14 @@ function gedcom_get_siblings($person) {
 
       if (is_array($spouse) && count($spouse)) {
         $out .= '<ul>';
-        $spousenode = node_load($spouse['und'][0]['nid']);
+        $spousenode = node_load($spouse['und'][0]['target_id']);
         $out .= '<li><a href="/node/' . $spousenode->nid . '/tree">' .
                   $spousenode->title . '</a></li>';
       }
       if (is_array($family->family_child) && count($family->family_child)) {
         $out .= '<ul>';
         foreach ($family->family_child['und'] as $childrec) {
-          $child = node_load($childrec['nid']);
+          $child = node_load($childrec['target_id']);
           $out .= '<li><a href="/node/' . $child->nid . '/tree">' .
                   $child->title . '</a></li>';
         }
