@@ -154,7 +154,7 @@ function unkle_util_get_family_children($family) {
     if (property_exists($family, 'family_child') &&
         is_array($family->family_child) &&
         count($family->family_child) &&
-        count($family->family_wife[$lang])) {
+        count($family->family_child[$lang])) {
       foreach ($family->family_child[$lang] as $child) {
         $children[] = $child['target_id'];
       }    
